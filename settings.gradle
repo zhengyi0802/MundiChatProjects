@@ -1,4 +1,3 @@
-include ':PhoneClient2'
 include ':xmpp'
 include ':PhoneClient'
 include ':OttClient'

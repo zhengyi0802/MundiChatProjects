@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -112,7 +113,7 @@ public  class MainActivity extends AppCompatActivity implements MessageCallback 
         mAccount.setResourceName(mResourceName);
         mAccount.setPresenceMode(PRESENCE_MODE_AVAILABLE);
         Logger.debug(TAG, mAccount.toString());
-        XmppServiceBroadcastEventEmitter.initialize(this, "tk.munditv.xmpp");
+        XmppServiceBroadcastEventEmitter.initialize(this, "tk.munditv");
         receiver = new XmppServiceBroadcastEventReceiver();
         receiver.register(this);
         receiver.setMessageCallback(this);
@@ -181,6 +182,18 @@ public  class MainActivity extends AppCompatActivity implements MessageCallback 
             XmppServiceCommand.deleteMessage(this, message.getId());
         } else if (message.getMessage().contains("[execute]")) {
             checkPackage(message.getMessage());
+        } else if (message.getMessage().contains("[youtube]")) {
+            String url = message.getMessage().substring(9);
+            try {
+                Intent sendIntent = new Intent();
+                sendIntent.setAction(Intent.ACTION_VIEW);
+                //sendIntent.setPackage("");
+                sendIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                sendIntent.setData(Uri.parse(url));
+                startActivity(sendIntent);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 

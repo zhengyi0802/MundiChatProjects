@@ -38,6 +38,7 @@ import tk.munditv.xmpp.MessageCallback;
 import tk.munditv.xmpp.XmppAccount;
 import tk.munditv.xmpp.XmppRosterEntry;
 import tk.munditv.xmpp.XmppServiceBroadcastEventReceiver;
+import tk.munditv.xmpp.XmppServiceCommand;
 import tk.munditv.xmpp.database.SqLiteDatabase;
 import tk.munditv.xmpp.database.models.Message;
 import tk.munditv.xmpp.database.providers.MessagesProvider;
@@ -167,6 +168,13 @@ public class MainActivity extends AppCompatActivity implements MessageCallback {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         super.onOptionsItemSelected(item);
+        mPInfoList = null;
+        mPInfoList = new ArrayList<PInfo>();
+        mMessagesList = null;
+        mMessagesList = new ArrayList<Message>();
+        mMessagesAdapter.notifyDataSetChanged();
+        mApplicationAdapter.notifyDataSetChanged();
+        XmppServiceCommand.disconnect(this);
         switch(item.getItemId())//得到被點選的item的itemId
         {
             case R.id.action_scan:

@@ -35,6 +35,7 @@ public class CustomCaptureActivity extends AppCompatActivity {
         capture = new CaptureManager(this, barcodeScannerView);
         capture.initializeFromIntent(getIntent(), savedInstanceState);
         capture.decode();
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override

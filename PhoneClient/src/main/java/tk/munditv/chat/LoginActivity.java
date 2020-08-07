@@ -68,6 +68,7 @@ public class LoginActivity extends AppCompatActivity implements MessageCallback 
         receiver = new XmppServiceBroadcastEventReceiver();
         receiver.register(this);
         receiver.setMessageCallback(this);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     private void saveLoginData() {

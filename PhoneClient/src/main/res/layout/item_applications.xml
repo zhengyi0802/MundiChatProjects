@@ -8,5 +8,5 @@
         android:id="@+id/btn_application"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Button" />
+        android:text="" />
 </LinearLayout>

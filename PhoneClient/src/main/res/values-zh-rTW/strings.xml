@@ -20,4 +20,7 @@
     <string name="dialog_title">註冊帳號</string>
     <string name="dialog_message">註冊已完成</string>
 
+    <string name="action_scan">掃描二維碼</string>
+    <string name="action_login">登入</string>
+    <string name="action_settings">設定</string>
 </resources>

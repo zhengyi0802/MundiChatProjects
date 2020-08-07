@@ -1,14 +1,22 @@
 package tk.munditv.chat;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,8 +26,6 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
-
-import org.jxmpp.stringprep.XmppStringprepException;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -40,6 +46,7 @@ public class MainActivity extends AppCompatActivity implements MessageCallback {
 
     private static final String TAG = "MainActivity";
     private static final int ACTION_LOGIN = 0;
+    private static final int PERMISSION_REQUEST_CODE = 100;
 
     private XmppServiceBroadcastEventReceiver receiver;
     private TextView mAccount;
@@ -68,6 +75,8 @@ public class MainActivity extends AppCompatActivity implements MessageCallback {
         super.onCreate(savedInstanceState);
         Logger.debug(TAG, "onCreate()");
         setContentView(R.layout.activity_main);
+        checkStorage();
+
         receiver = new XmppServiceBroadcastEventReceiver();
         receiver.register(this);
         receiver.setMessageCallback(this);
@@ -149,6 +158,30 @@ public class MainActivity extends AppCompatActivity implements MessageCallback {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        super.onOptionsItemSelected(item);
+        switch(item.getItemId())//得到被點選的item的itemId
+        {
+            case R.id.action_scan:
+                initScanner();
+                break;
+            case R.id.action_login:
+                startLogin();
+                break;
+            case R.id.action_settings:
+                break;
+        }
+        return true;
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Logger.debug(TAG, "onActivityResult() requestCode = " + requestCode);
         if (requestCode == ACTION_LOGIN) {
@@ -182,10 +215,14 @@ public class MainActivity extends AppCompatActivity implements MessageCallback {
             }
             setOttClientName();
             if (xmppAccount.getXmppJid() == null) {
-                Intent intent = new Intent(this, LoginActivity.class);
-                startActivityForResult(intent, ACTION_LOGIN);
+                startLogin();
             }
         }
+    }
+
+    private void startLogin() {
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivityForResult(intent, ACTION_LOGIN);
     }
 
     private void initScanner() {
@@ -364,4 +401,48 @@ public class MainActivity extends AppCompatActivity implements MessageCallback {
         return formatter.format(calendar.getTime());
     }
 
+    private void checkStorage() {
+        String state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+            if (Build.VERSION.SDK_INT >= 23) {
+                if(!checkPermission()) {
+                    requestPermission();
+                }
+            }
+        }
+    }
+
+    private boolean checkPermission() {
+        int result = ContextCompat.checkSelfPermission(MainActivity.this,
+                android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if (result == PackageManager.PERMISSION_GRANTED) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private void requestPermission() {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this,
+                android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            Toast.makeText(MainActivity.this, "Write External Storage permission allows us to save files. Please allow this permission in App Settings.", Toast.LENGTH_LONG).show();
+        } else {
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_REQUEST_CODE);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[],
+                                           int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSION_REQUEST_CODE:
+                if (grantResults.length > 0 && grantResults[0]
+                        == PackageManager.PERMISSION_GRANTED) {
+                    Log.e("value", "Permission Granted, Now you can use local drive .");
+                } else {
+                    Log.e("value", "Permission Denied, You cannot use local drive .");
+                }
+                break;
+        }
+    }
 }

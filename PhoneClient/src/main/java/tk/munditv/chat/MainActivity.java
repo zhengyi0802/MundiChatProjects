@@ -1,6 +1,9 @@
 package tk.munditv.chat;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -41,7 +44,12 @@ public class MainActivity extends AppCompatActivity implements MessageCallback {
     private XmppServiceBroadcastEventReceiver receiver;
     private TextView mAccount;
     private TextView mOttAccount;
-    private TextView mMessageBox;
+    private RecyclerView mMessagesView;
+    private RecyclerView mApplicationsView;
+    private MessagesAdapter mMessagesAdapter;
+    private ApplicationAdapter mApplicationAdapter;
+    private ArrayList<Message> mMessagesList;
+    private ArrayList<PInfo> mPInfoList;
     private EditText mMessage;
     private Button mSendButton;
     private SharedPreferences preferences;
@@ -50,8 +58,6 @@ public class MainActivity extends AppCompatActivity implements MessageCallback {
     private String host;
     private String mConnectedMessages;
     private String mAvailable;
-
-    private ArrayList<PInfo> ottpackages;
 
     private SqLiteDatabase mDatabase;
     private MessagesProvider messagesProvider;
@@ -68,7 +74,6 @@ public class MainActivity extends AppCompatActivity implements MessageCallback {
         mAccount = findViewById(R.id.txt_account);
         mOttAccount = findViewById(R.id.txt_ottaccount);
         mMessage = findViewById(R.id.edit_message);
-        mMessageBox = findViewById(R.id.message_box);
         mSendButton = findViewById(R.id.btn_send);
         mSendButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -78,6 +83,28 @@ public class MainActivity extends AppCompatActivity implements MessageCallback {
                     MainApp.getInstance().sendMessage(ottAccount, message);
                 }
                 mMessage.setText(null);
+            }
+        });
+
+        mMessagesView = findViewById(R.id.view_messages);
+        mMessagesList = new ArrayList<Message>();
+        mMessagesAdapter
+                = new MessagesAdapter(this, R.layout.item_messages,mMessagesList);
+        mMessagesView .setLayoutManager(new LinearLayoutManager(this));
+        mMessagesView.setAdapter(mMessagesAdapter);
+        mMessagesView.addItemDecoration(new DividerItemDecoration(this,
+                DividerItemDecoration.VERTICAL));
+
+        mApplicationsView = findViewById(R.id.view_apps);
+        mPInfoList = new ArrayList<PInfo>();
+        mApplicationAdapter
+                = new ApplicationAdapter(this, R.layout.item_applications, mPInfoList);
+        mApplicationsView .setLayoutManager(new LinearLayoutManager(this));
+        mApplicationsView.setAdapter(mApplicationAdapter);
+        mApplicationsView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                view.callOnClick();
             }
         });
 
@@ -92,7 +119,6 @@ public class MainActivity extends AppCompatActivity implements MessageCallback {
             initScanner();
         } else {
             setOttClientName();
-            MainApp.getInstance().connect();
         }
         mDatabase = new SqLiteDatabase(this, "messages.db");
         messagesProvider = new MessagesProvider(mDatabase);
@@ -102,6 +128,7 @@ public class MainActivity extends AppCompatActivity implements MessageCallback {
     protected void onStart() {
         super.onStart();
         Logger.debug(TAG, "onStart()");
+        MainApp.getInstance().connect();
     }
 
     @Override
@@ -157,8 +184,6 @@ public class MainActivity extends AppCompatActivity implements MessageCallback {
             if (xmppAccount.getXmppJid() == null) {
                 Intent intent = new Intent(this, LoginActivity.class);
                 startActivityForResult(intent, ACTION_LOGIN);
-            } else {
-                MainApp.getInstance().connect();
             }
         }
     }
@@ -184,44 +209,50 @@ public class MainActivity extends AppCompatActivity implements MessageCallback {
     }
 
     @Override
-    public void onMessageAdded(String remoteAccount, boolean incoming) throws XmppStringprepException {
+    public void onMessageAdded(String remoteAccount, boolean incoming) {
         Logger.debug(TAG, "onMessageAdded()");
         List<Message> arrayList = new ArrayList<Message>();
         arrayList = messagesProvider.getMessagesWithRecipient(xmppAccount.getXmppJid(), remoteAccount);
+        boolean appflag = false;
         if(incoming) {
-            String message = null;
-            String displaymsg = mMessageBox.getText().toString();;
-            ottpackages = new ArrayList<PInfo>();
             for (Message m : arrayList) {
-                message = m.getMessage();
-                long timestamp = m.getCreationTimestamp();
-                String date = getDate(timestamp);
+                String message = m.getMessage();
+                Logger.debug(TAG, "message = " + message);
                 String tag = "[package] ";
                 String tag2 = "[error] ";
                 if (message.contains(tag)) {
+                    appflag = true;
                     String msg = message.substring(tag.length());
                     try {
                         PInfo p = new Gson().fromJson(msg, PInfo.class);
-                        displaymsg += "[" + p.getAppname() +"] ";
-                        //displaymsg += "package = " + p.getPName() +"\n";
-                        ottpackages.add(p);
+                        Logger.debug(TAG, "get package name = " + p.getAppname());
+                        mPInfoList.add(p);
+                        mApplicationAdapter.setRemoteAccount(remoteAccount);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 } else if(message.contains(tag2)) {
                     Logger.debug(TAG, "OTT error Occurred!");
+                    mMessagesList.add(m);
+                } else {
+                    Logger.debug(TAG, "message = " + m.getMessage());
+                    mMessagesList.add(m);
                 }
-                mMessageBox.setText(displaymsg);
+            }
+
+            if (appflag) {
+                Logger.debug(TAG, "notify Application Adapter");
+                mApplicationAdapter.notifyDataSetChanged();
+            } else {
+                Logger.debug(TAG, "notify incoming Messages Adapter message");
+                mMessagesAdapter.notifyDataSetChanged();
             }
         } else {
-            String messages = mMessageBox.getText().toString();
             for (Message m : arrayList) {
-                String message = m.getMessage();
-                long timestamp = m.getCreationTimestamp();
-                String date = getDate(timestamp);
-                messages += message + "\n";
+                mMessagesList.add(m);
             }
-            mMessageBox.setText(messages);
+            Logger.debug(TAG, "notify outgoing Messages Adapter");
+            mMessagesAdapter.notifyDataSetChanged();
         }
         MainApp.getInstance().clearConversation(remoteAccount);
     }

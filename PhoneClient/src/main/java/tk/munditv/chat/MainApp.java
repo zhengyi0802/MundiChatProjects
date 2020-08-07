@@ -97,6 +97,7 @@ public class MainApp extends Application {
 
     public void sendMessage(String remoteAccount, String message) {
         Logger.debug(TAG, "sendMessage() remoteAccount = " + remoteAccount);
+        Logger.debug(TAG, "sendMessage() message = " + message);
         XmppServiceCommand.sendMessage(this, remoteAccount, message);
     }
 

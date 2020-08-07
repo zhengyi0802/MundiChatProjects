@@ -121,7 +121,6 @@ public class XmppServiceConnection
                 .setXmppDomain(mAccount.getServiceName())
                 .setHost(mAccount.getHost())
                 .setPort(mAccount.getPort())
-                .enableDefaultDebugger()
                 .setFile(mAccount.getFilePath());
 
         if (XmppService.CUSTOM_SSL_CONTEXT != null) {

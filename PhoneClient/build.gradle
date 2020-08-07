@@ -46,7 +46,7 @@ dependencies {
     implementation 'org.igniterealtime.smack:smack-bosh:4.3.4'
     implementation 'com.google.zxing:core:3.4.0'
     implementation 'com.journeyapps:zxing-android-embedded:3.6.0'
-    implementation 'androidx.recyclerview:recyclerview:1.2.0-alpha05'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation project(path: ':xmpp')
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'

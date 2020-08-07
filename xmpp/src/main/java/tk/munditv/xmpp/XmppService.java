@@ -152,7 +152,6 @@ public class XmppService extends BackgroundService {
             @Override
             public void run() {
                 mPrefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-                //SmackConfiguration.setDefaultPacketReplyTimeout(PACKET_REPLY_TIMEOUT);
                 SmackConfiguration.setDefaultReplyTimeout(PACKET_REPLY_TIMEOUT);
                 Logger.info(TAG, "initializing database");
                 mDatabase = new SqLiteDatabase(XmppService.this, DATABASE_NAME);

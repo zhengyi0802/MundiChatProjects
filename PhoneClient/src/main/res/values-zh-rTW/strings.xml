@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">朕臨手機遙控</string>
+
+    <string name="rc_resourcename">朕臨手機遙控</string>
+    <string name="label_close">取消</string>
+
+    <string name="label_account">帳號</string>
+    <string name="label_password">密碼</string>
+    <string name="label_login_button">登入</string>
+    <string name="label_register_button">註冊</string>
+    <string name="label_send_button">送出</string>
+    <string name="label_ottaccount">OTT Account</string>
+    <string name="label_ok">OK</string>
+    <string name="message_connected"> 已連線至聲霸</string>
+    <string name="message_available"> 已在線</string>
+    <string name="err_login_failure">登入失敗</string>
+    <string name="err_register_failure">註冊失敗</string>
+
+    <string name="dialog_title">註冊帳號</string>
+    <string name="dialog_message">註冊已完成</string>
+
+</resources>

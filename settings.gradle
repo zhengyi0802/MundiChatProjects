@@ -1,0 +1,4 @@
+include ':xmpp'
+include ':PhoneClient'
+include ':OttClient'
+rootProject.name = "MundiChatProjects"

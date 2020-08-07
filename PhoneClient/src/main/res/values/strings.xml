@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">PhoneClient</string>
+
+    <string name="rc_resourcename">PhoneClient</string>
+    <string name="label_close">Cancel</string>
+
+    <string name="label_account">Account</string>
+    <string name="label_password">Password</string>
+    <string name="label_login_button">Login</string>
+    <string name="label_register_button">Register</string>
+    <string name="label_send_button">Send</string>
+    <string name="label_ottaccount">OTT Account</string>
+    <string name="label_ok">OK</string>
+    <string name="message_connected"> has conneted to OTT Box</string>
+    <string name="message_available"> Available</string>
+    <string name="err_login_failure">Login Failure</string>
+    <string name="err_register_failure">Register Failure</string>
+
+    <string name="dialog_title">Register Account</string>
+    <string name="dialog_message">Register Successful</string>
+</resources>

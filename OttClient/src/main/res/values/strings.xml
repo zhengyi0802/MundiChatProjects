@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">Mundi OTT Client</string>
+
+    <string name="label_login">Login by QRCode</string>
+    <string name="label_productmodel">Product Model : </string>
+    <string name="label_serialno">Serial Number : </string>
+    <string name="label_usage">Login by using Phone scan QRCode image as above :</string>
+
+    <string name="string_hostname" translatable="false">webrtc01.mundi-tv.tk</string>
+    <string name="string_servicename" translatable="false">webrtc01.mundi-tv.tk</string>
+    <string name="string_resourcename" translatable="false">OttClient</string>
+    <string name="param_serialno" translatable="false">serialno</string>
+    <string name="param_uuid" translatable="false">uuid</string>
+
+    <string name="str_connected">Connected</string>
+    <string name="str_disconnected">Disconnected</string>
+    <string name="str_login">Login</string>
+    <string name="str_registered">Registered</string>
+    <string name="str_tryregister">Try Register</string>
+    <string name="str_registerfailure">Register Failure</string>
+</resources>

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">OTT 智慧遙控</string>
+    <string name="player_name">Mundi Youtube播放器</string>
 
     <string name="label_login">使用二維碼登入</string>
     <string name="label_productmodel">型號 : </string>

@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements MessageCallback {
         Logger.debug(TAG, "onCreate()");
         setContentView(R.layout.activity_main);
         checkStorage();
-
+        checkReceiveURL();
         receiver = new XmppServiceBroadcastEventReceiver();
         receiver.register(this);
         receiver.setMessageCallback(this);
@@ -225,6 +225,25 @@ public class MainActivity extends AppCompatActivity implements MessageCallback {
             if (xmppAccount.getXmppJid() == null) {
                 startLogin();
             }
+        }
+    }
+
+    private void checkReceiveURL() {
+        Intent intent = getIntent();
+        String action = intent.getAction();
+        String type = intent.getType();
+
+        String url = intent.getStringExtra(Intent.EXTRA_TEXT);
+        if (Intent.ACTION_SEND.equals(action) && type != null) {
+            if ("text/html".equals(type)) {
+
+            }
+        } else if (Intent.ACTION_SEND_MULTIPLE.equals(action) && type != null) {
+            if (type.startsWith("text/")) {
+
+            }
+        } else {
+            // Handle other intents, such as being started from the home screen
         }
     }
 

@@ -21,18 +21,20 @@
         <activity android:name="tk.munditv.chat.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
+                <action android:name="android.intent.action.SEND" />
+                <action android:name="android.intent.action.SEND_MULTIPLE" />
                 <category android:name="android.intent.category.LAUNCHER" />
+                <data android:mimeType="*/*" />
             </intent-filter>
         </activity>
         <activity android:name=".CustomCaptureActivity"
             android:parentActivityName=".MainActivity" />
         <activity android:name=".LoginActivity"
             android:parentActivityName=".MainActivity" />
-        <service android:name=".xmpp.XmppService"
+        <service android:name="tk.munditv.xmpp.XmppService"
             android:enabled="true"
             android:exported="true" />
-        <receiver android:name=".xmpp.XmppServiceBroadcastEventReceiver" />
+        <receiver android:name="tk.munditv.xmpp.XmppServiceBroadcastEventReceiver" />
     </application>
 
 </manifest>

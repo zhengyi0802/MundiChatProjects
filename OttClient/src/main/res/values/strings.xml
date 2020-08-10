@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Mundi OTT Client</string>
+    <string name="player_name">Mundi Youtube Player</string>
 
     <string name="label_login">Login by QRCode</string>
     <string name="label_productmodel">Product Model : </string>

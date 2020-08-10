@@ -31,6 +31,7 @@ import java.util.List;
 
 import tk.munditv.chat.utils.PInfo;
 import tk.munditv.chat.utils.Packages;
+import tk.munditv.chat.ytplayer.YTPlayer;
 import tk.munditv.xmpp.Logger;
 import tk.munditv.xmpp.MessageCallback;
 import tk.munditv.xmpp.XmppAccount;
@@ -180,14 +181,13 @@ public  class MainActivity extends AppCompatActivity implements MessageCallback 
             if (listSent != message.getCreationTimestamp()) sendPackages(remoteAccount);
             listSent = message.getCreationTimestamp();
             XmppServiceCommand.deleteMessage(this, message.getId());
-        } else if (message.getMessage().contains("[execute]")) {
+        } else if (message.getMessage().toLowerCase().contains("[execute]")) {
             checkPackage(message.getMessage());
-        } else if (message.getMessage().contains("[youtube]")) {
+        } else if (message.getMessage().toLowerCase().contains("[youtube]")) {
             String url = message.getMessage().substring(9);
             try {
-                Intent sendIntent = new Intent();
+                Intent sendIntent = new Intent(this, YTPlayer.class);
                 sendIntent.setAction(Intent.ACTION_VIEW);
-                //sendIntent.setPackage("");
                 sendIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 sendIntent.setData(Uri.parse(url));
                 startActivity(sendIntent);

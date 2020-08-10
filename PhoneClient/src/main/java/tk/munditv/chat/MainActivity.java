@@ -46,7 +46,8 @@ import tk.munditv.xmpp.database.providers.MessagesProvider;
 public class MainActivity extends AppCompatActivity implements MessageCallback {
 
     private static final String TAG = "MainActivity";
-    private static final int ACTION_LOGIN = 0;
+    private static final int ACTION_LOGIN = 10001;
+    private static final int ACTION_YTSEARCH = 10002;
     private static final int PERMISSION_REQUEST_CODE = 100;
 
     private XmppServiceBroadcastEventReceiver receiver;
@@ -137,15 +138,16 @@ public class MainActivity extends AppCompatActivity implements MessageCallback {
     @Override
     protected void onStart() {
         super.onStart();
-        Logger.debug(TAG, "onStart()");
-        MainApp.getInstance().connect();
+        Logger.debug(TAG, "onStart() connected=" + MainApp.getInstance().isConnected());
+        if (!MainApp.getInstance().isConnected()) {
+            MainApp.getInstance().connect();
+        }
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         Logger.debug(TAG, "onStop()");
-        //MainApp.getInstance().disconnect();
     }
 
     @Override
@@ -174,14 +176,19 @@ public class MainActivity extends AppCompatActivity implements MessageCallback {
         mMessagesList = new ArrayList<Message>();
         mMessagesAdapter.notifyDataSetChanged();
         mApplicationAdapter.notifyDataSetChanged();
-        XmppServiceCommand.disconnect(this);
+        //XmppServiceCommand.disconnect(this);
         switch(item.getItemId())//得到被點選的item的itemId
         {
             case R.id.action_scan:
+                XmppServiceCommand.disconnect(this);
                 initScanner();
                 break;
             case R.id.action_login:
+                XmppServiceCommand.disconnect(this);
                 startLogin();
+                break;
+            case R.id.action_ytsearch:
+                startYTSearch();
                 break;
             case R.id.action_settings:
                 break;
@@ -235,8 +242,15 @@ public class MainActivity extends AppCompatActivity implements MessageCallback {
 
         String url = intent.getStringExtra(Intent.EXTRA_TEXT);
         if (Intent.ACTION_SEND.equals(action) && type != null) {
-            if ("text/html".equals(type)) {
-
+            if ("text/plain".equals(type)) {
+                if(url.contains("v=")) {
+                    String str = "[youtube]https://youtube.be/watch?v=" + url.substring(2);
+                    if(ottAccount == null) {
+                        ottAccount = MainApp.getInstance().getOttAccount();
+                    }
+                    XmppServiceCommand.sendMessage(this, ottAccount, str);
+                    Logger.debug(TAG, "send youtube url = " + str);
+                }
             }
         } else if (Intent.ACTION_SEND_MULTIPLE.equals(action) && type != null) {
             if (type.startsWith("text/")) {
@@ -250,6 +264,11 @@ public class MainActivity extends AppCompatActivity implements MessageCallback {
     private void startLogin() {
         Intent intent = new Intent(this, LoginActivity.class);
         startActivityForResult(intent, ACTION_LOGIN);
+    }
+
+    private void startYTSearch() {
+        Intent intent = new Intent(this, YTSearchActivity.class);
+        startActivityForResult(intent, ACTION_YTSEARCH);
     }
 
     private void initScanner() {
@@ -324,11 +343,13 @@ public class MainActivity extends AppCompatActivity implements MessageCallback {
     @Override
     public void onConnected() {
         Logger.debug(TAG, "onConnected()");
+        MainApp.getInstance().setConnected(true);
     }
 
     @Override
     public void onDisconnected() {
         Logger.debug(TAG, "onDisconnected()");
+        MainApp.getInstance().setConnected(false);
     }
 
     @Override

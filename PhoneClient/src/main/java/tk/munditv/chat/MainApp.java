@@ -19,6 +19,7 @@ public class MainApp extends Application {
     private XmppAccount xmppAccount;
     private String ottAccount;
     private SharedPreferences preferences;
+    private boolean isConnected = false;
 
     public static MainApp getInstance() {
         return mInstance;
@@ -30,6 +31,7 @@ public class MainApp extends Application {
         mInstance = this;
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
         initialize();
+        isConnected = false;
     }
 
     private void initialize() {
@@ -58,6 +60,16 @@ public class MainApp extends Application {
         Logger.debug(TAG, "xmppAccount.ResourceName = " + xmppAccount.getResourceName());
         Logger.debug(TAG, "xmppAccount.FilePath = " + xmppAccount.getFilePath());
         Logger.debug(TAG, "xmppAccount.getPersonalMessage = " + xmppAccount.getPersonalMessage());
+    }
+
+    public void setConnected(boolean connected) {
+        Logger.debug(TAG, "setConnected = " + connected);
+        isConnected = connected;
+    }
+
+    public boolean isConnected() {
+        Logger.debug(TAG, "getConnected = " + isConnected);
+        return isConnected;
     }
 
     public XmppAccount getXmppAccount() {
